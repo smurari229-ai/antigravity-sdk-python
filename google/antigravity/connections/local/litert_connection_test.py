@@ -176,6 +176,15 @@ _urlopen_no_proxy = litert_connection._urlopen_no_proxy
 
 class LiteRTConnectionTest(unittest.IsolatedAsyncioTestCase):
 
+  def setUp(self):
+    super().setUp()
+    self.patcher = mock.patch(
+        "google.antigravity.connections.local.local_connection._get_default_binary_path",
+        return_value="/fake/binary",
+    )
+    self.patcher.start()
+    self.addCleanup(self.patcher.stop)
+
   @mock.patch("os.path.exists")
   @mock.patch("subprocess.Popen")
   @mock.patch(
