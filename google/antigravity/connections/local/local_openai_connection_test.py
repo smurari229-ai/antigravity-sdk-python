@@ -25,6 +25,15 @@ from google.antigravity.connections.local import local_openai_connection_config
 
 class LocalOpenAIConnectionTest(unittest.TestCase):
 
+  def setUp(self):
+    super().setUp()
+    self.patcher = mock.patch(
+        "google.antigravity.connections.local.local_connection._get_default_binary_path",
+        return_value="/fake/binary",
+    )
+    self.patcher.start()
+    self.addCleanup(self.patcher.stop)
+
   def test_local_openai_strategy_harness_config(self):
     """Verify generic external OpenAI configuration works and clears Gemini config."""
     config = local_openai_connection_config.LocalOpenAIAgentConfig(
