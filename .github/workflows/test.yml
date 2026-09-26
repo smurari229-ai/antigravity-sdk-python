@@ -1,0 +1,37 @@
+name: Test SDK
+
+on:
+  push:
+    branches: ["main", "deep-audit-*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,otel]" grpcio-tools
+
+      - name: Generate protobuf modules
+        run: |
+          python -m grpc_tools.protoc -I. --python_out=. google/antigravity/proto/*
+          touch google/antigravity/proto/__init__.py
+
+      - name: Run test suite
+        run: python -m pytest -q
