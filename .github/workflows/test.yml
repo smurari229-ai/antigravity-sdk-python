@@ -26,7 +26,7 @@ jobs:
       - name: Install test dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]" grpcio-tools
+          python -m pip install -e ".[dev,otel]" grpcio-tools
 
       - name: Generate protobuf modules
         run: |
